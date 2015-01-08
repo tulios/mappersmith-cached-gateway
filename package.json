@@ -1,0 +1,11 @@
+{
+  "name": "mappersmith-cached-gateway",
+  "version": "0.1.0",
+  "description": "CachedGateway for the Mappersmith project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tulio Ornelas <ornelas.tulio@gmail.com>",
+  "license": "MIT"
+}

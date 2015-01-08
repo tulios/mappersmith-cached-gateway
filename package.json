@@ -4,8 +4,12 @@
   "description": "CachedGateway for the Mappersmith project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-test": "./node_modules/.bin/browserify -r mappersmith -t rewireify -o build/mappersmith.test.js && ./node_modules/.bin/browserify index.js -x mappersmith -t rewireify -s MappersmithCachedGateway -o build/mappersmith-cached-gateway.test.js"
   },
   "author": "Tulio Ornelas <ornelas.tulio@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "browserify": "^8.0.3",
+    "rewireify": "0.0.13"
+  }
 }

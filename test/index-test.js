@@ -2,57 +2,38 @@ var expect = chai.expect;
 var Mappersmith = require('mappersmith');
 
 describe('MappersmithCachedGateway', function() {
-  var fakeServer,
-      host,
-      path,
-      url,
-      method,
-      rawData,
-      success,
-      fail,
-      complete;
-
-  beforeEach(function() {
-    fakeServer = sinon.fakeServer.create();
-    fakeServer.lastRequest = function() {
-      return fakeServer.requests[fakeServer.requests.length - 1];
-    }
-
-    host = 'http://full-url';
-    path = '/path';
-    url = host + path;
-    success = sinon.spy(function(){});
-    fail = sinon.spy(function(){});
-    complete = sinon.spy(function(){});
-  });
-
-  afterEach(function() {
-    fakeServer.restore();
-  });
 
   it('works', function() {
-    method = 'get';
-    rawData = 'OK';
-
-    fakeServer.respondWith(
-      method,
-      url,
-      [status, {'Content-Type': 'text/plain'}, rawData]
-    );
+    var fakeTimer = sinon.useFakeTimers();
+    var fakeServer = sinon.fakeServer.create();
 
     var Gateway = MappersmithCachedGateway(Mappersmith.VanillaGateway);
     var Client = Mappersmith.forge({
-      host: host,
+      host: 'http://full-url',
       resources: {
-        Test: {execute: 'get:' + path}
+        Test: {execute: {path: '/path'}}
       }
     }, Gateway);
 
-    Client.Test.execute(success);
+    fakeServer.respondWith(
+      'GET',
+      'http://full-url/path',
+      [200, {'Content-Type': 'text/plain'}, 'OK']
+    );
+
+    var success = sinon.spy(function(){});
+
+    Client.Test.execute(success).fail(function() { console.log(arguments) });
+    fakeTimer.tick(1);
 
     fakeServer.respond();
+    fakeTimer.tick(1);
+
     expect(success).to.have.been.calledWith('OK');
     expect(fakeServer.requests.length).to.equal(1);
+
+    fakeServer.restore();
+    fakeTimer.restore();
   });
 
 });

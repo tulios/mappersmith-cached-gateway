@@ -11,5 +11,8 @@
   "devDependencies": {
     "browserify": "^8.0.3",
     "rewireify": "0.0.13"
+  },
+  "dependencies": {
+    "mappersmith": "^0.2.0"
   }
 }

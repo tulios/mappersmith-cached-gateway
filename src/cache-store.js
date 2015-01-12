@@ -20,17 +20,24 @@ CacheStore.prototype = {
    *  - request: callback to fetch the data
    *  - gatewayInstance
    *  - writeCallback: callback to be used as write doneCallback
-   *  - opts: options for cache store
+   *  - cacheOpts: options for cache store
    */
   fetch: function(name, opts) {
     var gateway = opts.gatewayInstance;
+    var cacheOpts = Utils.extend({}, opts.cacheOpts);
+
     this.read(name, function(data) {
       if (data === null) {
         var hasProcessor = gateway.processor !== undefined;
         var originalProcessor = gateway.processor || function(data) { return data };
+
         var wrappedProcessor = function(newData) {
-          this.write(name, newData, opts.cacheOpts, opts.writeCallback);
+          var args = [name, newData, cacheOpts];
+          if (!!opts.writeCallback) args.push(opts.writeCallback);
+
+          this.write.apply(this, args);
           return originalProcessor(newData);
+
         }.bind(this);
 
         gateway.processor = wrappedProcessor;
@@ -78,29 +85,17 @@ CacheStore.prototype = {
   },
 
   /*
-   * Returns true if the cache contains an entry for the given key.
-   *
-   * @param name {String}
-   * @param callback {Function} - receives true/false
-   */
-  isAvailable: function(name, callback) {
-    this.read(name, function(data) {
-      callback(data === null);
-    });
-  },
-
-  /*
    * Cleanup the cache by removing expired entries.
    */
   cleanup: function() {
-
+    throw new Utils.Exception('CacheStore#cleanup not implemented');
   },
 
   /*
    * Clear the entire cache.
    */
   clear: function() {
-
+    throw new Utils.Exception('CacheStore#clear not implemented');
   }
 
 }

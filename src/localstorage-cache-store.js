@@ -21,14 +21,8 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
 
   read: function(name, callback) {
     this._async(function() {
-      var cacheKey = this._cacheKey(name);
-      var rawData = this.localStorage.getItem(cacheKey);
-
-      if (rawData === null || rawData === undefined) {
-        return callback(null);
-      }
-
-      var data = JSON.parse(rawData);
+      var data = this._syncRead(name);
+      if (data == null) return callback(null);
 
       if (data.ttl < Date.now()) {
         this.delete(name);
@@ -41,10 +35,12 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
   },
 
   write: function(name, data, opts, doneCallback) {
+    var options = Utils.extend({ttl: this.ttl}, opts);
+
     this._async(function() {
-      var cacheKey = this._cacheKey(name);
-      var ttl = parseInt(opts.ttl, 10);
-      if (isNaN(ttl)) ttl = 0;
+      var cacheKey = this.cacheKey(name);
+      var ttl = parseInt(options.ttl, 10);
+      if (isNaN(ttl)) ttl = this.ttl;
 
       this.localStorage.setItem(
         cacheKey,
@@ -60,14 +56,47 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
 
   delete: function(name, doneCallback) {
     this._async(function() {
-      var cacheKey = this._cacheKey(name);
-      this.localStorage.removeItem(cacheKey);
+      this._syncDelete(name);
       if (!!doneCallback) doneCallback();
     });
   },
 
-  _cacheKey: function(key) {
-    return 'mappersmith_cache:' + key;
+  cleanup: function(doneCallback) {
+    this._async(function() {
+      this._eachCacheKey(function(cacheKey) {
+        var data = this._syncRead(cacheKey);
+        if (data.ttl < Date.now()) {
+          this._syncDelete(cacheKey);
+        }
+      });
+
+      if (!!doneCallback) doneCallback();
+    });
+  },
+
+  clear: function(doneCallback) {
+    this._async(function() {
+      this._eachCacheKey(function(cacheKey) { this._syncDelete(cacheKey) });
+      if (!!doneCallback) doneCallback();
+    });
+  },
+
+  _syncDelete: function(name) {
+    var cacheKey = this.cacheKey(name);
+    this.localStorage.removeItem(cacheKey);
+  },
+
+  _syncRead: function(name) {
+    var cacheKey = this.cacheKey(name);
+    var rawData = this.localStorage.getItem(cacheKey);
+
+    return rawData == null ? null : JSON.parse(rawData);
+  },
+
+  _eachCacheKey: function(eachCallback) {
+    Object.keys(this.localStorage).
+      filter(function(key) { return this.isCacheKey(key) }.bind(this)).
+      forEach(eachCallback.bind(this));
   },
 
   _async: function(callback) {

@@ -40,6 +40,20 @@ describe('CacheStore', function() {
     fakeTimer.restore();
   });
 
+  describe('constructor', function() {
+    it('has default namespace');
+    it('has default ttl');
+  });
+
+  describe('#cacheKey', function() {
+    it('generates a key with the configured namespace');
+  });
+
+  describe('#isCacheKey', function() {
+    it('returns true for cacheKey');
+    it('returns false for everything else');
+  });
+
   describe('#fetch', function() {
     var request,
         name,

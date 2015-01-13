@@ -1,9 +1,25 @@
 var Utils = require('mappersmith').Utils;
 
-var CacheStore = function() {
+var CacheStore = function(opts) {
+  var options = Utils.extend({}, opts);
+  this.namespace = options.namespace || 'mappersmith_cache';
+  this.namespaceRegex = new RegExp('^' + this.namespace + ':');
+  this.ttl = options.ttl || 5 * 60;
 }
 
 CacheStore.prototype = {
+  /*
+   * Generates a key with the configured namespace.
+   *
+   * @param name {String}
+   */
+  cacheKey: function(name) {
+    return this.isCacheKey(name) ? name : this.namespace + ':' + name;
+  },
+
+  isCacheKey: function(name) {
+    return this.namespaceRegex.test(name);
+  },
 
   /*
    * Fetches data from the cache, using the given key. If there is data in
@@ -67,7 +83,7 @@ CacheStore.prototype = {
    *
    * @param name {String} - cache key
    * @param data
-   * @param opts {Object} - Accepts ttl {Int}
+   * @param opts {Object} - Accepts ttl {int}
    * @param doneCallback {Function} - receives data
    */
   write: function(name, data, opts, doneCallback) {
@@ -86,15 +102,19 @@ CacheStore.prototype = {
 
   /*
    * Cleanup the cache by removing expired entries.
+   *
+   * @param doneCallback {Function}
    */
-  cleanup: function() {
+  cleanup: function(doneCallback) {
     throw new Utils.Exception('CacheStore#cleanup not implemented');
   },
 
   /*
    * Clear the entire cache.
+   *
+   * @param doneCallback {Function}
    */
-  clear: function() {
+  clear: function(doneCallback) {
     throw new Utils.Exception('CacheStore#clear not implemented');
   }
 

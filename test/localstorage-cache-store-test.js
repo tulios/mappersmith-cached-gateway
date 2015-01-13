@@ -23,6 +23,10 @@ describe('LocalstorageCacheStore', function() {
     fakeTimer.restore();
   });
 
+  describe('constructor', function() {
+
+  });
+
   describe('#cleanup', function() {
     var entryName2;
 

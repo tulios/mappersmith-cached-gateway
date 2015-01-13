@@ -3,18 +3,7 @@ var CacheStore = require('./cache-store');
 
 var LocalstorageCacheStore = function() {
   CacheStore.apply(this, arguments);
-
   this.localStorage = window.localStorage;
-  this.supported = (function() {
-    var test = 'test';
-    try {
-      this.localStorage.setItem(test, test);
-      this.localStorage.removeItem(test);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }.bind(this))();
 }
 
 LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
@@ -40,21 +29,8 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
       opts = {};
     }
 
-    var options = Utils.extend({ttl: this.ttl}, opts);
-
     this._async(function() {
-      var cacheKey = this.cacheKey(name);
-      var ttl = parseInt(options.ttl, 10);
-      if (isNaN(ttl)) ttl = this.ttl;
-
-      this.localStorage.setItem(
-        cacheKey,
-        JSON.stringify({
-          ttl: Date.now() + ttl,
-          value: data
-        })
-      );
-
+      this._syncWrite(name, data, opts);
       if (!!doneCallback) doneCallback(data);
     });
   },
@@ -96,6 +72,21 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
     var rawData = this.localStorage.getItem(cacheKey);
 
     return rawData == null ? null : JSON.parse(rawData);
+  },
+
+  _syncWrite: function(name, data, opts) {
+    var options = Utils.extend({ttl: this.ttl}, opts);
+    var cacheKey = this.cacheKey(name);
+    var ttl = parseInt(options.ttl, 10);
+    if (isNaN(ttl)) ttl = this.ttl;
+
+    this.localStorage.setItem(
+      cacheKey,
+      JSON.stringify({
+        ttl: Date.now() + ttl,
+        value: data
+      })
+    );
   },
 
   _eachCacheKey: function(eachCallback) {

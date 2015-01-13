@@ -41,7 +41,7 @@ describe('LocalstorageCacheStore', function() {
       expect(value).to.not.be.null;
     });
 
-    it('deletes all expired keys', function() {
+    it('deletes all expired entries', function() {
       fakeTimer.tick(2);
       cache.cleanup();
       fakeTimer.tick(1);
@@ -70,7 +70,7 @@ describe('LocalstorageCacheStore', function() {
       expect(value).to.not.be.null;
     });
 
-    it('deletes all keys', function() {
+    it('deletes all entries', function() {
       cache.clear();
       fakeTimer.tick(1);
 
@@ -87,7 +87,7 @@ describe('LocalstorageCacheStore', function() {
   });
 
   describe('#read', function() {
-    describe('without data', function() {
+    describe('without entry', function() {
       beforeEach(function() {
         entryName = 'invalid';
       });
@@ -101,7 +101,7 @@ describe('LocalstorageCacheStore', function() {
       });
     });
 
-    describe('with valid data', function() {
+    describe('with a valid entry', function() {
       beforeEach(function() {
         cache.write(entryName, entryValue);
         fakeTimer.tick(1);
@@ -119,7 +119,7 @@ describe('LocalstorageCacheStore', function() {
       });
     });
 
-    describe('with expired data', function() {
+    describe('with expired entry', function() {
       beforeEach(function() {
         cache.write(entryName, entryValue, {ttl: 1});
         fakeTimer.tick(1);
@@ -178,6 +178,24 @@ describe('LocalstorageCacheStore', function() {
       cache.write(entryName, entryValue, doneCallback);
       fakeTimer.tick(1);
       expect(doneCallback).to.have.been.calledWith(entryValue);
+    });
+  });
+
+  describe('#delete', function() {
+    beforeEach(function() {
+      cache.write(entryName, entryValue);
+      fakeTimer.tick(1);
+
+      var value = localStorage.getItem(cache.cacheKey(entryName));
+      expect(value).to.not.be.null;
+    });
+
+    it('deletes the entry', function() {
+      cache.delete(entryName);
+      fakeTimer.tick(1);
+
+      var value = localStorage.getItem(cache.cacheKey(entryName));
+      expect(value).to.be.null;
     });
   });
 

@@ -85,6 +85,10 @@ CacheStore.prototype = {
    * @param data
    * @param opts {Object} - Accepts ttl {int}
    * @param doneCallback {Function} - receives data
+   *
+   * This method can be called in two ways:
+   *  write(name, data, opts, doneCallback);
+   *  write(name, data, doneCallback);
    */
   write: function(name, data, opts, doneCallback) {
     throw new Utils.Exception('CacheStore#write not implemented');

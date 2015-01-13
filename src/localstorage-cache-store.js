@@ -35,6 +35,11 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
   },
 
   write: function(name, data, opts, doneCallback) {
+    if (typeof opts === 'function') {
+      doneCallback = opts;
+      opts = {};
+    }
+
     var options = Utils.extend({ttl: this.ttl}, opts);
 
     this._async(function() {

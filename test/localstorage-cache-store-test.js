@@ -86,4 +86,99 @@ describe('LocalstorageCacheStore', function() {
     });
   });
 
+  describe('#read', function() {
+    describe('without data', function() {
+      beforeEach(function() {
+        entryName = 'invalid';
+      });
+
+      it('calls the callback with null', function(done) {
+        cache.read(entryName, function(data) {
+          expect(data).to.be.null;
+          done();
+        });
+        fakeTimer.tick(1);
+      });
+    });
+
+    describe('with valid data', function() {
+      beforeEach(function() {
+        cache.write(entryName, entryValue);
+        fakeTimer.tick(1);
+
+        var value = localStorage.getItem(cache.cacheKey(entryName));
+        expect(value).to.not.be.null;
+      });
+
+      it('returns the persisted value', function(done) {
+        cache.read(entryName, function(data) {
+          expect(data).to.equal(entryValue);
+          done();
+        });
+        fakeTimer.tick(1);
+      });
+    });
+
+    describe('with expired data', function() {
+      beforeEach(function() {
+        cache.write(entryName, entryValue, {ttl: 1});
+        fakeTimer.tick(1);
+
+        var value = localStorage.getItem(cache.cacheKey(entryName));
+        expect(value).to.not.be.null;
+      });
+
+      it('deletes the expired entry and calls the callback with null', function(done) {
+        sinon.spy(cache, 'delete');
+
+        fakeTimer.tick(5);
+        cache.read(entryName, function(data) {
+          expect(data).to.be.null;
+          expect(cache.delete).to.have.been.calledWith(entryName);
+          done();
+        });
+        fakeTimer.tick(1);
+      });
+    });
+  });
+
+  describe('#write', function() {
+    describe('without a TTL', function() {
+      it('persists value with default TTL', function() {
+        cache.write(entryName, entryValue);
+        fakeTimer.tick(1);
+
+        var data = localStorage.getItem(cache.cacheKey(entryName));
+        expect(data).to.not.be.null;
+        data = JSON.parse(data);
+
+        expect(data).to.have.property('ttl', Date.now() + cache.ttl);
+        expect(data).to.have.property('value', entryValue);
+      });
+    });
+
+    describe('with TTL', function() {
+      it('persists value with informed TTL', function() {
+        var ttl = 5;
+        cache.write(entryName, entryValue, {ttl: ttl});
+        fakeTimer.tick(1);
+
+        var data = localStorage.getItem(cache.cacheKey(entryName));
+        expect(data).to.not.be.null;
+        data = JSON.parse(data);
+
+        expect(data).to.have.property('ttl', Date.now() + ttl);
+        expect(data).to.have.property('value', entryValue);
+      });
+    });
+
+    it('calls the doneCallback', function() {
+      var doneCallback = sinon.spy(function(){});
+
+      cache.write(entryName, entryValue, doneCallback);
+      fakeTimer.tick(1);
+      expect(doneCallback).to.have.been.calledWith(entryValue);
+    });
+  });
+
 });

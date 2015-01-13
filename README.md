@@ -2,6 +2,8 @@
 
 TODO: write the damn doc
 
+**Still in development, not ready for production yet (please wait!)**
+
 ## Tests
 
 1. npm install

@@ -10,7 +10,10 @@ describe('#createCacheStore', function() {
 
     Object.getOwnPropertyNames(CacheStore.prototype).
     forEach(function(property) {
-      expect(otherCacheStore.prototype).to.have.property(property, CacheStore.prototype[property]);
+      expect(otherCacheStore.prototype).to.have.property(
+        property,
+        CacheStore.prototype[property]
+      );
     });
   });
 

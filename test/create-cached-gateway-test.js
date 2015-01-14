@@ -27,6 +27,40 @@ describe('#createCachedGateway', function() {
     });
   });
 
+  describe('with cacheStore options', function() {
+    var StubbedStore,
+        opts;
+
+    beforeEach(function() {
+      opts = {ttl: 1};
+      StubbedStore = sinon.spy(MappersmithCachedGateway, 'LocalStorageCacheStore');
+      createCachedGateway.__set__('LocalStorageCacheStore', StubbedStore);
+    });
+
+    afterEach(function() {
+      MappersmithCachedGateway.LocalStorageCacheStore.restore();
+    });
+
+    it('accepts as the first argument', function() {
+      createCachedGateway(opts);
+      expect(StubbedStore).to.have.been.calledWith(opts);
+    });
+
+    it('accepts as the second argument', function() {
+      createCachedGateway(Mappersmith.VanillaGateway, opts);
+      expect(StubbedStore).to.have.been.calledWith(opts);
+    });
+
+    it('accepts as the third argument', function() {
+      createCachedGateway(
+        Mappersmith.VanillaGateway,
+        Mappersmith.LocalStorageCacheStore,
+        opts
+      );
+      expect(StubbedStore).to.have.been.calledWith(opts);
+    });
+  });
+
   describe('#get', function() {
     var cache,
         StubbedStore,

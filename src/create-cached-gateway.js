@@ -1,7 +1,10 @@
 var Mappersmith = require('mappersmith');
 var Utils = Mappersmith.Utils;
+var LocalstorageCacheStore = require('./localstorage-cache-store');
 
 module.exports = function(TransportGateway, CacheStore) {
+  TransportGateway = TransportGateway || Mappersmith.VanillaGateway;
+  CacheStore = CacheStore || LocalstorageCacheStore;
 
   var store = new CacheStore();
 

@@ -13,7 +13,7 @@ describe('#createCachedGateway', function() {
 
   it('creates a new class that inherits from the configured gateway', function() {
     CachedGateway = createCachedGateway(
-      Mappersmith.VanillaGateway,
+      TransportGateway,
       MappersmithCachedGateway.CacheStore
     );
 

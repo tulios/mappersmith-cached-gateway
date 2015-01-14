@@ -1,6 +1,6 @@
 module.exports = {
   CacheStore: require('./src/cache-store'),
-  LocalstorageCacheStore: require('./src/localstorage-cache-store'),
+  LocalStorageCacheStore: require('./src/local-storage-cache-store'),
 
   /*
    * Creates a new gateway based on the informed transportGateway that will

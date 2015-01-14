@@ -7,7 +7,7 @@ describe('MappersmithCachedGateway', function() {
   });
 
   it('exposes LocalstorageCacheStore', function() {
-    expect(MappersmithCachedGateway.LocalstorageCacheStore).to.exist();
+    expect(MappersmithCachedGateway.LocalStorageCacheStore).to.exist();
   });
 
   it('exposes method createCachedGateway', function() {

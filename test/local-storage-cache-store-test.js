@@ -2,9 +2,9 @@ var expect = chai.expect;
 var Mappersmith = require('mappersmith');
 var Utils = Mappersmith.Utils;
 var CacheStore = MappersmithCachedGateway.CacheStore;
-var LocalstorageCacheStore = MappersmithCachedGateway.LocalstorageCacheStore;
+var LocalStorageCacheStore = MappersmithCachedGateway.LocalStorageCacheStore;
 
-describe('LocalstorageCacheStore', function() {
+describe('LocalStorageCacheStore', function() {
   var fakeTimer,
       cache,
       entryName,
@@ -15,7 +15,7 @@ describe('LocalstorageCacheStore', function() {
     entryName = 'test-localstorage';
     entryValue = 'test-value-localstorage';
 
-    cache = new LocalstorageCacheStore();
+    cache = new LocalStorageCacheStore();
     cache.clear();
   });
 
@@ -25,7 +25,7 @@ describe('LocalstorageCacheStore', function() {
 
   describe('constructor', function() {
     it('holds a reference for window.localStorage', function() {
-      expect(cache.localStorage).to.be.equal(window.localStorage);
+      expect(cache.storage).to.be.equal(window.localStorage);
     });
   });
 

@@ -1,9 +1,9 @@
 var Utils = require('mappersmith').Utils;
 var CreateCacheStore = require('./create-cache-store');
 
-var LocalstorageCacheStore = CreateCacheStore({
+var LocalStorageCacheStore = CreateCacheStore({
   init: function() {
-    this.localStorage = window.localStorage;
+    this.storage = window.localStorage;
   },
 
   read: function(name, callback) {
@@ -62,12 +62,12 @@ var LocalstorageCacheStore = CreateCacheStore({
 
   _syncDelete: function(name) {
     var cacheKey = this.cacheKey(name);
-    this.localStorage.removeItem(cacheKey);
+    this.storage.removeItem(cacheKey);
   },
 
   _syncRead: function(name) {
     var cacheKey = this.cacheKey(name);
-    var rawData = this.localStorage.getItem(cacheKey);
+    var rawData = this.storage.getItem(cacheKey);
 
     return rawData == null ? null : JSON.parse(rawData);
   },
@@ -78,7 +78,7 @@ var LocalstorageCacheStore = CreateCacheStore({
     var ttl = parseInt(options.ttl, 10);
     if (isNaN(ttl)) ttl = this.ttl;
 
-    this.localStorage.setItem(
+    this.storage.setItem(
       cacheKey,
       JSON.stringify({
         ttl: Date.now() + ttl,
@@ -88,7 +88,7 @@ var LocalstorageCacheStore = CreateCacheStore({
   },
 
   _eachCacheKey: function(eachCallback) {
-    Object.keys(this.localStorage).
+    Object.keys(this.storage).
     filter(function(key) { return this.isCacheKey(key) }.bind(this)).
     forEach(eachCallback.bind(this));
   },
@@ -98,4 +98,4 @@ var LocalstorageCacheStore = CreateCacheStore({
   }
 });
 
-module.exports = LocalstorageCacheStore;
+module.exports = LocalStorageCacheStore;

@@ -23,7 +23,5 @@ module.exports = {
     return this.createCachedGateway(Transport, Store);
   },
 
-  createCacheStore: function() {
-
-  }
+  createCacheStore: require('./src/create-cache-store')
 }

@@ -1,12 +1,10 @@
 var Utils = require('mappersmith').Utils;
-var CacheStore = require('./cache-store');
+var CreateCacheStore = require('./create-cache-store');
 
-var LocalstorageCacheStore = function() {
-  CacheStore.apply(this, arguments);
-  this.localStorage = window.localStorage;
-}
-
-LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
+var LocalstorageCacheStore = CreateCacheStore({
+  init: function() {
+    this.localStorage = window.localStorage;
+  },
 
   read: function(name, callback) {
     this._async(function() {
@@ -91,14 +89,13 @@ LocalstorageCacheStore.prototype = Utils.extend({}, CacheStore.prototype, {
 
   _eachCacheKey: function(eachCallback) {
     Object.keys(this.localStorage).
-      filter(function(key) { return this.isCacheKey(key) }.bind(this)).
-      forEach(eachCallback.bind(this));
+    filter(function(key) { return this.isCacheKey(key) }.bind(this)).
+    forEach(eachCallback.bind(this));
   },
 
   _async: function(callback) {
     setTimeout(function() { callback.apply(this) }.bind(this), 1);
   }
-
 });
 
 module.exports = LocalstorageCacheStore;

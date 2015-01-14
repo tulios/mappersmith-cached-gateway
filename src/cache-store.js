@@ -1,5 +1,13 @@
 var Utils = require('mappersmith').Utils;
 
+/*
+ * An abstract cache store class. There are multiple cache store
+ * implementations, each having its own additional features.
+ *
+ * @param opts {Object} - accepted keys:
+ *  - namespace {String}, default: 'mappersmith_cache'
+ *  - ttl {int}, default: 300 (5 minutes)
+ */
 var CacheStore = function(opts) {
   var options = Utils.extend({}, opts);
   this.namespace = options.namespace || 'mappersmith_cache';
@@ -25,7 +33,7 @@ CacheStore.prototype = {
    * Fetches data from the cache, using the given key. If there is data in
    * the cache with the given key, then that data is returned.
    *
-   * If there is no such data in the cache (a cache miss), then +nil+ will be
+   * If there is no such data in the cache (a cache miss), then null will be
    * returned. However, if a block has been passed, that block will be passed
    * the key and executed in the event of a cache miss. The return value of the
    * block will be written to the cache under the given cache key, and that

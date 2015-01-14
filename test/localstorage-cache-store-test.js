@@ -24,7 +24,9 @@ describe('LocalstorageCacheStore', function() {
   });
 
   describe('constructor', function() {
-
+    it('holds a reference for window.localStorage', function() {
+      expect(cache.localStorage).to.be.equal(window.localStorage);
+    });
   });
 
   describe('#cleanup', function() {

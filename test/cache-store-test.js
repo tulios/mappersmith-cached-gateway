@@ -41,17 +41,52 @@ describe('CacheStore', function() {
   });
 
   describe('constructor', function() {
-    it('has default namespace');
-    it('has default ttl');
+    it('has default namespace', function() {
+      expect(cache.namespace).to.be.equal('mappersmith_cache');
+    });
+
+    it('has default ttl', function() {
+      expect(cache.ttl).to.be.equal(300);
+    });
+
+    it('allows to change the default namespace', function() {
+      expect(new CacheStore({namespace: 'A'}).namespace).to.be.equal('A');
+    });
+
+    it('allows to change the default ttl', function() {
+      expect(new CacheStore({ttl: 5}).ttl).to.be.equal(5);
+    });
   });
 
   describe('#cacheKey', function() {
-    it('generates a key with the configured namespace');
+    var namespace;
+
+    beforeEach(function() {
+      namespace = cache.namespace;
+    });
+
+    describe('when called with a raw name', function() {
+      it('generates a key with the configured namespace', function() {
+        expect(cache.cacheKey('A')).to.be.equal(namespace + ':' + 'A');
+      });
+    });
+
+    describe('when called with a cacheKey', function() {
+      it('returns the same value', function() {
+        var cacheKey = namespace + ':' + 'A';
+        expect(cache.cacheKey(cacheKey)).to.be.equal(cacheKey);
+      });
+    });
   });
 
   describe('#isCacheKey', function() {
-    it('returns true for cacheKey');
-    it('returns false for everything else');
+    it('returns true for cacheKey', function() {
+      expect(cache.isCacheKey(cache.cacheKey('A'))).to.be.true;
+    });
+
+    it('returns false for everything else', function() {
+      expect(cache.isCacheKey('A')).to.be.false;
+    });
   });
 
   describe('#fetch', function() {

@@ -9,10 +9,10 @@ var Utils = require('mappersmith').Utils;
  *  - ttl {int}, default: 300 (5 minutes)
  */
 var CacheStore = function(opts) {
-  var options = Utils.extend({}, opts);
-  this.namespace = options.namespace || 'mappersmith_cache';
+  this.options = Utils.extend({}, opts);
+  this.namespace = this.options.namespace || 'mappersmith_cache';
   this.namespaceRegex = new RegExp('^' + this.namespace + ':');
-  this.ttl = options.ttl || 5 * 60;
+  this.ttl = this.options.ttl || 5 * 60;
 }
 
 CacheStore.prototype = {

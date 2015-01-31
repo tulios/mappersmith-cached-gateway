@@ -56,6 +56,11 @@ describe('CacheStore', function() {
     it('allows to change the default ttl', function() {
       expect(new CacheStore({ttl: 5}).ttl).to.be.equal(5);
     });
+
+    it('stores the options object', function() {
+      var opts = {a: 1, b: 2};
+      expect(new CacheStore(opts).options).to.be.deep.equal(opts);
+    })
   });
 
   describe('#cacheKey', function() {

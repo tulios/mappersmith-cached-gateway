@@ -29,6 +29,13 @@ CacheStore.prototype = {
     return this.namespaceRegex.test(name);
   },
 
+  resolveTTL: function(opts) {
+    var options = Utils.extend({ttl: this.ttl}, opts);
+    var ttl = parseInt(options.ttl, 10);
+    if (isNaN(ttl)) ttl = this.ttl;
+    return ttl;
+  },
+
   /*
    * Fetches data from the cache, using the given key. If there is data in
    * the cache with the given key, then that data is returned.

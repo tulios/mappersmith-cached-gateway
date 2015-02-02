@@ -73,10 +73,8 @@ var LocalStorageCacheStore = CreateCacheStore({
   },
 
   _syncWrite: function(name, data, opts) {
-    var options = Utils.extend({ttl: this.ttl}, opts);
     var cacheKey = this.cacheKey(name);
-    var ttl = parseInt(options.ttl, 10);
-    if (isNaN(ttl)) ttl = this.ttl;
+    var ttl = this.resolveTTL(opts);
 
     this.storage.setItem(
       cacheKey,

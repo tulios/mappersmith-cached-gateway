@@ -94,6 +94,20 @@ describe('CacheStore', function() {
     });
   });
 
+  describe('#resolveTTL', function() {
+    it('returns global TTL if none is defiend', function() {
+      expect(cache.resolveTTL()).to.be.equal(cache.ttl);
+    });
+
+    it('returns the given TTL when it is valid', function() {
+      expect(cache.resolveTTL({ttl: 7})).to.be.equal(7);
+    });
+
+    it('returns global TTL when the given one is invalid', function() {
+      expect(cache.resolveTTL({ttl: 'wrong'})).to.be.equal(cache.ttl);
+    });
+  });
+
   describe('#fetch', function() {
     var request,
         name,

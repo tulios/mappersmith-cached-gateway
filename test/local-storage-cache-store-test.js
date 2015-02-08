@@ -68,11 +68,18 @@ describe('LocalStorageCacheStore', function() {
 
   describe('#clear', function() {
     beforeEach(function() {
+      localStorage.setItem('alien1', 'alien1');
+      localStorage.setItem('alien2', 'alien2');
       cache.write(entryName, entryValue);
       fakeTimer.tick(1);
 
       var value = localStorage.getItem(cache.cacheKey(entryName));
       expect(value).to.not.be.null;
+    });
+
+    afterEach(function() {
+      localStorage.removeItem('alien1');
+      localStorage.removeItem('alien2');
     });
 
     it('deletes all entries', function() {
@@ -81,6 +88,8 @@ describe('LocalStorageCacheStore', function() {
 
       var value = localStorage.getItem(cache.cacheKey(entryName));
       expect(value).to.be.null;
+      expect(localStorage.getItem('alien1')).to.equal('alien1');
+      expect(localStorage.getItem('alien2')).to.equal('alien2');
     });
 
     it('calls the doneCallback', function() {

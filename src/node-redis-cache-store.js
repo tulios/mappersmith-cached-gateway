@@ -81,17 +81,14 @@ var NodeRedisCacheStore = CreateCacheStore({
   },
 
   _newDoneCallback: function(operation, doneCallback) {
-    // Using "self" var instead of "bind(this)" to avoid
-    // change the context of doneCallback
-    var self = this;
     return function(err) {
       if (err) {
-        self._redisOnError('#' + operation + ' ' + err);
+        this._redisOnError('#' + operation + ' ' + err);
 
       } else {
         if (doneCallback) doneCallback();
       }
-    }
+    }.bind(this)
   },
 
   _redisOnError: function(err) {

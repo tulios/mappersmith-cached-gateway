@@ -93,6 +93,7 @@ var NodeRedisCacheStore = CreateCacheStore({
 
   _redisOnError: function(err) {
     if (this.logger) this.logger.error('[NodeRedisCacheStore] ' + err);
+    if (this.options.onError) this.options.onError(err);
   }
 });
 

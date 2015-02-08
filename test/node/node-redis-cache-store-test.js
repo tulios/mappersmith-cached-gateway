@@ -268,4 +268,17 @@ describe('NodeRedisCacheStore', function() {
     });
   });
 
+  describe('#_redisOnError', function() {
+    describe('with a custom onError callback', function() {
+      it('calls the configured callback', function() {
+        var error = 'error msg';
+        var onErrorCallback = sinon.spy(function(){});
+
+        cache.options.onError = onErrorCallback;
+        cache._redisOnError(error);
+        expect(onErrorCallback).to.have.been.calledWith(error);
+      });
+    });
+  });
+
 });

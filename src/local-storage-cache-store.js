@@ -29,7 +29,7 @@ var LocalStorageCacheStore = CreateCacheStore({
 
     this._async(function() {
       this._syncWrite(name, data, opts);
-      if (!!doneCallback) doneCallback(data);
+      if (!!doneCallback) doneCallback();
     });
   },
 

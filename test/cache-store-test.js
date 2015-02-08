@@ -1,5 +1,4 @@
 var expect = chai.expect;
-var Mappersmith = require('mappersmith');
 var Utils = Mappersmith.Utils;
 var CacheStore = MappersmithCachedGateway.CacheStore;
 

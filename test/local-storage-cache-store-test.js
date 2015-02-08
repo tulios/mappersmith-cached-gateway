@@ -1,5 +1,4 @@
 var expect = chai.expect;
-var Mappersmith = require('mappersmith');
 var Utils = Mappersmith.Utils;
 var CacheStore = MappersmithCachedGateway.CacheStore;
 var LocalStorageCacheStore = MappersmithCachedGateway.LocalStorageCacheStore;
@@ -183,7 +182,7 @@ describe('LocalStorageCacheStore', function() {
 
       cache.write(entryName, entryValue, doneCallback);
       fakeTimer.tick(1);
-      expect(doneCallback).to.have.been.calledWith(entryValue);
+      expect(doneCallback).to.have.been.called;
     });
   });
 

@@ -5,6 +5,7 @@ var redis = require('redis');
 
 var NodeRedisCacheStore = CreateCacheStore({
   init: function() {
+    this.logger = this.options.logger || console;
     this.redisOptions = Utils.extend({}, this.options.redis);
     this.storage = redis.createClient.apply(this, this.redisOptions.client);
     this.storage.on('error', this._redisOnError.bind(this));
@@ -91,7 +92,7 @@ var NodeRedisCacheStore = CreateCacheStore({
   },
 
   _redisOnError: function(err) {
-    console.error('[NodeRedisCacheStore] ' + err);
+    if (this.logger) this.logger.error('[NodeRedisCacheStore] ' + err);
   }
 });
 

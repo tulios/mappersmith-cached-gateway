@@ -26,7 +26,10 @@ describe('NodeRedisCacheStore', function() {
 
     client = redis.createClient();
     client.flushdb(function(err) { done() });
+
     cache = new NodeRedisCacheStore();
+    cache.storage = client;
+    cache.logger = false;
   });
 
   describe('constructor', function() {
@@ -52,11 +55,6 @@ describe('NodeRedisCacheStore', function() {
   });
 
   describe('#read', function() {
-    beforeEach(function() {
-      cache.storage = client;
-      cache.logger = false;
-    });
-
     describe('without entry', function() {
       beforeEach(function() {
         entryName = 'invalid';
@@ -117,6 +115,47 @@ describe('NodeRedisCacheStore', function() {
         cache.read('cacheKey', callback);
         expect(cache._redisOnError).to.have.been.called;
         expect(callback).to.have.been.calledWith(null);
+      });
+    });
+  });
+
+  describe('#write', function() {
+    describe('without a TTL', function() {
+      it('persists value with default TTL', function(done) {
+        cache.write(entryName, entryValue);
+        client.ttl(cache.cacheKey(entryName), function(err, ttl) {
+          expect(ttl).to.equal(cache.ttl);
+
+          client.get(cache.cacheKey(entryName), function(err, value) {
+            expect(value).to.not.be.null;
+            var data = JSON.parse(value);
+            expect(data).to.have.property('value', entryValue);
+            done();
+          });
+        });
+      });
+    });
+
+    describe('with TTL', function() {
+      it('persists value with informed TTL', function(done) {
+        var configuredTTL = 50;
+        cache.write(entryName, entryValue, {ttl: configuredTTL});
+        client.ttl(cache.cacheKey(entryName), function(err, ttl) {
+          expect(ttl).to.equal(configuredTTL);
+
+          client.get(cache.cacheKey(entryName), function(err, value) {
+            expect(value).to.not.be.null;
+            var data = JSON.parse(value);
+            expect(data).to.have.property('value', entryValue);
+            done();
+          });
+        });
+      });
+
+      it('calls the doneCallback', function() {
+        cache.write(entryName, entryValue, function() {
+          done();
+        });
       });
     });
   });

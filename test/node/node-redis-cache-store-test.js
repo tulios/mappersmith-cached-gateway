@@ -152,9 +152,117 @@ describe('NodeRedisCacheStore', function() {
         });
       });
 
-      it('calls the doneCallback', function() {
+      it('calls the doneCallback', function(done) {
         cache.write(entryName, entryValue, function() {
           done();
+        });
+      });
+    });
+
+    describe('in case of error', function() {
+      beforeEach(function() {
+        cache.storage.setex = sinon.stub().callsArgWith(3, 'error');
+      });
+
+      it('calls "_redisOnError"', function() {
+        sinon.spy(cache, '_redisOnError');
+        var doneCallback = sinon.spy(function(){});
+        cache.write(entryName, entryValue, doneCallback);
+        expect(cache._redisOnError).to.have.been.called;
+        expect(doneCallback).to.not.have.been.called;
+      });
+    });
+  });
+
+  describe('#delete', function() {
+    beforeEach(function(done) {
+      cache.write(entryName, entryValue);
+      client.get(cache.cacheKey(entryName), function(err, value) {
+        expect(value).to.not.be.null;
+        done();
+      });
+    });
+
+    it('deletes the entry', function(done) {
+      cache.delete(entryName);
+      client.get(cache.cacheKey(entryName), function(err, value) {
+        expect(value).to.be.null;
+        done();
+      });
+    });
+
+    describe('in case of error', function() {
+      beforeEach(function() {
+        cache.storage.del = sinon.stub().callsArgWith(1, 'error');
+      });
+
+      it('calls "_redisOnError"', function() {
+        sinon.spy(cache, '_redisOnError');
+        var doneCallback = sinon.spy(function(){});
+        cache.delete(entryName, doneCallback);
+        expect(cache._redisOnError).to.have.been.called;
+        expect(doneCallback).to.not.have.been.called;
+      });
+    });
+  });
+
+  describe('#cleanup', function() {
+    it('calls the doneCallback', function() {
+      var doneCallback = sinon.spy(function(){});
+      cache.cleanup(doneCallback);
+      expect(doneCallback).to.have.been.called;
+    });
+  });
+
+  describe('#clear', function() {
+    it('deletes all entries in the namespace', function(done) {
+      client.set('alien1', 'alien1');
+      client.set('alien2', 'alien2');
+      cache.write(entryName, entryValue);
+
+      client.keys('*', function(err, keys1) {
+        expect(keys1.length).to.equal(3);
+        cache.clear(function() {
+
+          client.keys('*', function(err, keys2) {
+            expect(keys2.length).to.equal(2);
+            cache.read(entryName, function(value) {
+              expect(value).to.be.null;
+              done();
+            });
+          });
+
+        });
+      });
+    });
+
+    describe('in case of error', function() {
+      describe('with keys', function() {
+        beforeEach(function() {
+          cache.storage.keys = sinon.stub().callsArgWith(1, 'error');
+        });
+
+        it('calls "_redisOnError"', function() {
+          sinon.spy(cache, '_redisOnError');
+          var doneCallback = sinon.spy(function(){});
+          cache.clear(doneCallback);
+          expect(cache._redisOnError).to.have.been.called;
+          expect(doneCallback).to.not.have.been.called;
+        });
+      });
+
+      describe('with del', function() {
+        beforeEach(function() {
+          cache.storage.keys = sinon.stub().callsArgWith(1, null, ['key']);
+          cache.storage.del = sinon.stub().callsArgWith(1, 'error');
+        });
+
+        it('calls "_redisOnError"', function() {
+          sinon.spy(cache, '_redisOnError');
+          var doneCallback = sinon.spy(function(){});
+          cache.clear(doneCallback);
+          expect(cache._redisOnError).to.have.been.called;
+          expect(doneCallback).to.not.have.been.called;
         });
       });
     });

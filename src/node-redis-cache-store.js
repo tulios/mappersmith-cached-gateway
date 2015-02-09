@@ -3,12 +3,31 @@ var CreateCacheStore = require('./create-cache-store');
 
 var redis = require('redis');
 
+/*
+ * This cache store uses the package "redis" (https://www.npmjs.com/package/redis)
+ * to provide the access.
+ *
+ * @param redis {Object} - accepted keys:
+ *  - client {Array}, e.g: `client: [6379, '127.0.0.1', options]` - take a look
+ *    at https://www.npmjs.com/package/redis for a complete list of options
+ *  - logger {Object}, default: console. Use `logger: false` to disable the logger
+ *  - password {String}, it will issue a AUTH command if defined
+ *  - onError {Function}
+ *
+ *  e.g:
+ *  var cacheStore = new NodeRedisCacheStore({redis: {
+ *    client: [6379, '127.0.0.1', {max_attempts: 10}],
+ *    password: 'foobar'
+ *  }});
+ *
+ */
 var NodeRedisCacheStore = CreateCacheStore({
   init: function() {
     this.redisOptions = Utils.extend({}, this.options.redis);
     this.logger = this.redisOptions.logger || console;
     this.storage = redis.createClient.apply(this, this.redisOptions.client);
     this.storage.on('error', this._redisOnError.bind(this));
+    if (this.redisOptions.password) this.storage.auth(this.redisOptions.password);
   },
 
   read: function(name, callback) {

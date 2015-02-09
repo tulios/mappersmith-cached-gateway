@@ -52,6 +52,14 @@ describe('NodeRedisCacheStore', function() {
     it('accepts a custom logger at "redis.logger" attribute', function() {
       expect(cache.logger).to.equal(logger);
     });
+
+    it('calls method "auth" if attribute "redis.password" is defined', function() {
+      var password = '123';
+      sinon.spy(redis.RedisClient.prototype, 'auth');
+      cache = new NodeRedisCacheStore({redis: {password: password}});
+      expect(redis.RedisClient.prototype.auth).to.have.been.calledWith(password);
+      redis.RedisClient.prototype.auth.restore();
+    });
   });
 
   describe('#read', function() {

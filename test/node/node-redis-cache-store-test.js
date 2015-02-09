@@ -33,12 +33,12 @@ describe('NodeRedisCacheStore', function() {
   });
 
   describe('constructor', function() {
-    var opts, logger;
+    var opts, logger, onErrorCallback;
 
     beforeEach(function() {
       logger = 'my-logger';
-      opts = {client: [6379, '127.0.0.1', {max_attempts: 5}]};
-      cache = new NodeRedisCacheStore({logger: logger, redis: opts});
+      opts = {logger: logger, client: [6379, '127.0.0.1', {max_attempts: 5}]};
+      cache = new NodeRedisCacheStore({redis: opts});
     });
 
     it('holds a reference of redis options at "redisOptions" attribute', function() {
@@ -49,7 +49,7 @@ describe('NodeRedisCacheStore', function() {
       expect(cache.storage).to.be.instanceof(redis.RedisClient);
     });
 
-    it('accepts a custom logger at "logger" attribute', function() {
+    it('accepts a custom logger at "redis.logger" attribute', function() {
       expect(cache.logger).to.equal(logger);
     });
   });
@@ -274,7 +274,7 @@ describe('NodeRedisCacheStore', function() {
         var error = 'error msg';
         var onErrorCallback = sinon.spy(function(){});
 
-        cache.options.onError = onErrorCallback;
+        cache.redisOptions.onError = onErrorCallback;
         cache._redisOnError(error);
         expect(onErrorCallback).to.have.been.calledWith(error);
       });

@@ -15,7 +15,7 @@
   },
   "keywords": [
     "cache",
-    "cache store"
+    "cache store",
     "isomorphic",
     "redis",
     "localstorage",

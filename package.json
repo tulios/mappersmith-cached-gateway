@@ -1,6 +1,6 @@
 {
   "name": "mappersmith-cached-gateway",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "CachedGateway for the Mappersmith project",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,14 @@
     "type": "git",
     "url": "https://github.com/tulios/mappersmith-cached-gateway.git"
   },
+  "keywords": [
+    "cache",
+    "cache store"
+    "isomorphic",
+    "redis",
+    "localstorage",
+    "sessionstorage"
+  ],
   "author": "Tulio Ornelas <ornelas.tulio@gmail.com>",
   "license": "MIT",
   "devDependencies": {

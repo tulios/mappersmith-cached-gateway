@@ -1,7 +1,7 @@
 [![npm version](https://badge.fury.io/js/mappersmith-cached-gateway.svg)](http://badge.fury.io/js/mappersmith-cached-gateway)
 # Mappersmith CachedGateway
 
-**CachedGateway** is a gateway for [Mappersmith](https://github.com/tulios/mappersmith) that wraps a transport gateway with a cache store to achieve transparent cache functionalities.
+**CachedGateway** is a gateway for [Mappersmith](https://github.com/tulios/mappersmith) that wraps a transport gateway with a cache store to achieve transparent cache functionalities. It provides cache stores for browser and server.
 
 ## Install
 
@@ -27,6 +27,20 @@ Build
 
 ```sh
 npm run build
+```
+
+## Requiring in Node.js
+
+For use in the server side.
+
+```javascript
+var MappersmithCachedGateway = require('mappersmith-cached-gateway/node');
+```
+
+If you don't need any server features (like redis cache store) just require the module:
+
+```javascript
+var MappersmithCachedGateway = require('mappersmith-cached-gateway');
 ```
 
 ## Usage
@@ -57,7 +71,7 @@ var Client = new Mappersmith.forge(manifest, MyCachedGateway)
 
 ### With a different CacheStore
 
-Use the second parameter to configure your cache store, at the moment, we only have `LocalStorageCacheStore` and `SessionStorageCacheStore` but it is really simple to create new ones.
+Use the second parameter to configure your cache store. Check the list of [available cache stores](#bundled-implementations) at the bottom of the readme.
 
 ```javascript
 var manifest = {}
@@ -71,7 +85,7 @@ var Client = Mappersmith.forge(manifest, MyCachedGateway)
 
 ### Options for CacheStore
 
-There are two options which can be configured for a cache store: **namespace** and **ttl**. The time to live (ttl) value can be defined globally and for each request using gateway options. It is possible to change the default ttl (the global value) through `createCachedGateway`, just pass an object with the key **ttl** and the value in seconds.
+There are two options which can be configured for a cache store: **namespace** and **ttl** (Some cache stores may have specific options, check the list of [available cache stores](#bundled-implementations) for a comprehensive list of options). The time to live (ttl) value can be defined globally and for each request using gateway options. It is possible to change the default ttl (the global value) through `createCachedGateway`, just pass an object with the key **ttl** and the value in seconds.
 
 ```javascript
 var CGateway = MappersmithCachedGateway;
@@ -130,8 +144,40 @@ var manifest = {
 
 ### Bundled implementations
 
-* `MappersmithCachedGateway.LocalStorageCacheStore`
-* `MappersmithCachedGateway.SessionStorageCacheStore`
+__LocalStorageCacheStore__
+
+_Browser only_. Require with `MappersmithCachedGateway.LocalStorageCacheStore`.
+
+__SessionStorageCacheStore__
+
+_Browser only_. Require with `MappersmithCachedGateway.SessionStorageCacheStore`.
+
+__NodeRedisCacheStore__
+
+_Server only_. Require with `MappersmithCachedGateway.node.NodeRedisCacheStore`.
+
+Extra options:
+
+* client (e.g: `client: [6379, '127.0.0.1', options]`) - take a look at [redis package](https://www.npmjs.com/package/redis) for a complete list of options
+* logger (default: console) - use `logger: false` to disable the logger
+* password - it will issue an AUTH command if defined
+* onError - callback to handle redis errors, the first argument is the error message
+
+Example:
+```javascript
+var cacheStore = new NodeRedisCacheStore({
+  redis: {
+    client: [6379, '127.0.0.1', {max_attempts: 10}],
+    password: 'foobar',
+    logger: false,
+    onError: function(err) {
+      console.error(err);
+    }
+  }
+});
+```
+
+Take a look at [node-redis-cache-store.js](https://github.com/tulios/mappersmith-cached-gateway/blob/master/src/node-redis-cache-store.js) to further details.
 
 ### How to write one?
 
@@ -139,6 +185,7 @@ var manifest = {
 MappersmithCachedGateway.createCacheStore({
   init: function() {
     // constructor, you have:
+    //  - this.options
     //  - this.namespace
     //  - this.ttl
   },
@@ -165,8 +212,14 @@ Take a look at [cache-store.js](https://github.com/tulios/mappersmith-cached-gat
 
 ## Tests
 
+Client
+
 1. Build the source (`npm run build-test`)
 2. Open test.html
+
+Server
+
+1. `npm test`
 
 ## Compile and release
 

@@ -11,7 +11,7 @@ var redis = require('redis');
  *  - client {Array}, e.g: `client: [6379, '127.0.0.1', options]` - take a look
  *    at https://www.npmjs.com/package/redis for a complete list of options
  *  - logger {Object}, default: console. Use `logger: false` to disable the logger
- *  - password {String}, it will issue a AUTH command if defined
+ *  - password {String}, it will issue an AUTH command if defined
  *  - onError {Function}
  *
  *  e.g:

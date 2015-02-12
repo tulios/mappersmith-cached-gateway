@@ -5,7 +5,8 @@ var createCachedGateway = MappersmithCachedGateway.createCachedGateway;
 
 describe('#createCachedGateway', function() {
   var TransportGateway,
-      CachedGateway;
+      CachedGateway,
+      StubbedStore;
 
   beforeEach(function() {
     TransportGateway = Mappersmith.VanillaGateway;
@@ -27,9 +28,18 @@ describe('#createCachedGateway', function() {
     });
   });
 
+  it('exposes the cache store through the class attribute "cacheStore"', function() {
+    var instance = new Object();
+    StubbedStore = sinon.stub(MappersmithCachedGateway, 'LocalStorageCacheStore').returns(instance);
+    createCachedGateway.__set__('LocalStorageCacheStore', StubbedStore);
+
+    CachedGateway = createCachedGateway();
+    expect(CachedGateway.cacheStore).to.equal(instance);
+    MappersmithCachedGateway.LocalStorageCacheStore.restore();
+  });
+
   describe('with cacheStore options', function() {
-    var StubbedStore,
-        opts;
+    var opts;
 
     beforeEach(function() {
       opts = {ttl: 1};

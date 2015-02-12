@@ -17,8 +17,7 @@ module.exports = function(TransportGateway, CacheStore, cacheStoreOpts) {
   cacheStoreOpts = Utils.extend({}, cacheStoreOpts);
 
   var store = new CacheStore(cacheStoreOpts);
-
-  return Mappersmith.createGateway(Utils.extend({}, TransportGateway.prototype, {
+  var GatewayClass = Mappersmith.createGateway(Utils.extend({}, TransportGateway.prototype, {
 
     get: function() {
       var cacheOpts = Utils.extend({}, this.opts.cache);
@@ -33,4 +32,7 @@ module.exports = function(TransportGateway, CacheStore, cacheStoreOpts) {
     }
 
   }));
+
+  GatewayClass.cacheStore = store;
+  return GatewayClass;
 }

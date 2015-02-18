@@ -23,7 +23,8 @@ module.exports = {
 }
 
 },{"./src/cache-store":2,"./src/create-cache-store":3,"./src/create-cached-gateway":4,"./src/local-storage-cache-store":5,"./src/session-storage-cache-store":6}],2:[function(require,module,exports){
-var Utils = require('mappersmith').Utils;
+(function (global){
+var Utils = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null).Utils;
 
 /*
  * An abstract cache store class. There are multiple cache store
@@ -34,10 +35,10 @@ var Utils = require('mappersmith').Utils;
  *  - ttl {int}, default: 300 (5 minutes)
  */
 var CacheStore = function(opts) {
-  var options = Utils.extend({}, opts);
-  this.namespace = options.namespace || 'mappersmith_cache';
+  this.options = Utils.extend({}, opts);
+  this.namespace = this.options.namespace || 'mappersmith_cache';
   this.namespaceRegex = new RegExp('^' + this.namespace + ':');
-  this.ttl = options.ttl || 5 * 60;
+  this.ttl = this.options.ttl || 5 * 60;
 }
 
 CacheStore.prototype = {
@@ -52,6 +53,13 @@ CacheStore.prototype = {
 
   isCacheKey: function(name) {
     return this.namespaceRegex.test(name);
+  },
+
+  resolveTTL: function(opts) {
+    var options = Utils.extend({ttl: this.ttl}, opts);
+    var ttl = parseInt(options.ttl, 10);
+    if (isNaN(ttl)) ttl = this.ttl;
+    return ttl;
   },
 
   /*
@@ -159,8 +167,10 @@ CacheStore.prototype = {
 
 module.exports = CacheStore;
 
-},{"mappersmith":"mappersmith"}],3:[function(require,module,exports){
-var Mappersmith = require('mappersmith');
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],3:[function(require,module,exports){
+(function (global){
+var Mappersmith = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null);
 var Utils = Mappersmith.Utils;
 var CacheStore = require('./cache-store');
 
@@ -174,8 +184,10 @@ module.exports = function(methods) {
   return newCacheStore;
 }
 
-},{"./cache-store":2,"mappersmith":"mappersmith"}],4:[function(require,module,exports){
-var Mappersmith = require('mappersmith');
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./cache-store":2}],4:[function(require,module,exports){
+(function (global){
+var Mappersmith = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null);
 var Utils = Mappersmith.Utils;
 var LocalStorageCacheStore = require('./local-storage-cache-store');
 
@@ -194,8 +206,7 @@ module.exports = function(TransportGateway, CacheStore, cacheStoreOpts) {
   cacheStoreOpts = Utils.extend({}, cacheStoreOpts);
 
   var store = new CacheStore(cacheStoreOpts);
-
-  return Mappersmith.createGateway(Utils.extend({}, TransportGateway.prototype, {
+  var GatewayClass = Mappersmith.createGateway(Utils.extend({}, TransportGateway.prototype, {
 
     get: function() {
       var cacheOpts = Utils.extend({}, this.opts.cache);
@@ -210,10 +221,15 @@ module.exports = function(TransportGateway, CacheStore, cacheStoreOpts) {
     }
 
   }));
+
+  GatewayClass.cacheStore = store;
+  return GatewayClass;
 }
 
-},{"./local-storage-cache-store":5,"mappersmith":"mappersmith"}],5:[function(require,module,exports){
-var Utils = require('mappersmith').Utils;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./local-storage-cache-store":5}],5:[function(require,module,exports){
+(function (global){
+var Utils = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null).Utils;
 var CreateCacheStore = require('./create-cache-store');
 
 var LocalStorageCacheStore = CreateCacheStore({
@@ -244,7 +260,7 @@ var LocalStorageCacheStore = CreateCacheStore({
 
     this._async(function() {
       this._syncWrite(name, data, opts);
-      if (!!doneCallback) doneCallback(data);
+      if (!!doneCallback) doneCallback();
     });
   },
 
@@ -288,10 +304,8 @@ var LocalStorageCacheStore = CreateCacheStore({
   },
 
   _syncWrite: function(name, data, opts) {
-    var options = Utils.extend({ttl: this.ttl}, opts);
     var cacheKey = this.cacheKey(name);
-    var ttl = parseInt(options.ttl, 10);
-    if (isNaN(ttl)) ttl = this.ttl;
+    var ttl = this.resolveTTL(opts);
 
     this.storage.setItem(
       cacheKey,
@@ -315,8 +329,10 @@ var LocalStorageCacheStore = CreateCacheStore({
 
 module.exports = LocalStorageCacheStore;
 
-},{"./create-cache-store":3,"mappersmith":"mappersmith"}],6:[function(require,module,exports){
-var Utils = require('mappersmith').Utils;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./create-cache-store":3}],6:[function(require,module,exports){
+(function (global){
+var Utils = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null).Utils;
 var LocalStorageCacheStore = require('./local-storage-cache-store');
 var CreateCacheStore = require('./create-cache-store');
 
@@ -330,5 +346,6 @@ var SessionStorageCacheStore = CreateCacheStore(
 
 module.exports = SessionStorageCacheStore;
 
-},{"./create-cache-store":3,"./local-storage-cache-store":5,"mappersmith":"mappersmith"}]},{},[1])(1)
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./create-cache-store":3,"./local-storage-cache-store":5}]},{},[1])(1)
 });

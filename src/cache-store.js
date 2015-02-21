@@ -76,7 +76,7 @@ CacheStore.prototype = {
         opts.request();
 
       } else {
-        gateway.successCallback(data);
+        gateway.successCallback(data, {cacheHit: true});
       }
     }.bind(this));
   },

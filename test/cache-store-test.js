@@ -202,8 +202,8 @@ describe('CacheStore', function() {
         expect(request).to.not.been.called;
       });
 
-      it('calls the successCallback with data', function() {
-        expect(success).to.have.been.calledWith(data);
+      it('calls the successCallback with data and {cacheHit: true} extraStats', function() {
+        expect(success).to.have.been.calledWith(data, sinon.match.has('cacheHit', true));
       });
     });
   });

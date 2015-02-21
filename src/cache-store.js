@@ -31,7 +31,7 @@ CacheStore.prototype = {
 
   resolveTTL: function(opts) {
     var options = Utils.extend({ttl: this.ttl}, opts);
-    var ttl = parseInt(options.ttl, 10);
+    var ttl = parseFloat(options.ttl, 10);
     if (isNaN(ttl)) ttl = this.ttl;
     return ttl;
   },

@@ -34,9 +34,9 @@ describe('LocalStorageCacheStore', function() {
     beforeEach(function() {
       entryName2 = entryName + '2';
 
-      cache.write(entryName, entryValue, {ttl: 2});
+      cache.write(entryName, entryValue, {ttl: 0.002});
       fakeTimer.tick(1);
-      cache.write(entryName2, entryValue, {ttl: 10});
+      cache.write(entryName2, entryValue, {ttl: 1});
       fakeTimer.tick(1);
 
       var value = localStorage.getItem(cache.cacheKey(entryName));
@@ -135,7 +135,7 @@ describe('LocalStorageCacheStore', function() {
 
     describe('with expired entry', function() {
       beforeEach(function() {
-        cache.write(entryName, entryValue, {ttl: 1});
+        cache.write(entryName, entryValue, {ttl: 0.001});
         fakeTimer.tick(1);
 
         var value = localStorage.getItem(cache.cacheKey(entryName));
@@ -158,7 +158,7 @@ describe('LocalStorageCacheStore', function() {
 
   describe('#write', function() {
     describe('without a TTL', function() {
-      it('persists value with default TTL', function() {
+      it('persists value with default TTL (persists in milliseconds)', function() {
         cache.write(entryName, entryValue);
         fakeTimer.tick(1);
 
@@ -166,14 +166,15 @@ describe('LocalStorageCacheStore', function() {
         expect(data).to.not.be.null;
         data = JSON.parse(data);
 
-        expect(data).to.have.property('ttl', Date.now() + cache.ttl);
+        var ttlInMilliseconds = Date.now() + (cache.ttl * 1000);
+        expect(data).to.have.property('ttl', ttlInMilliseconds);
         expect(data).to.have.property('value', entryValue);
       });
     });
 
     describe('with TTL', function() {
-      it('persists value with informed TTL', function() {
-        var ttl = 5;
+      it('persists value with informed TTL (persists in milliseconds)', function() {
+        var ttl = 0.005; // in seconds
         cache.write(entryName, entryValue, {ttl: ttl});
         fakeTimer.tick(1);
 
@@ -181,7 +182,8 @@ describe('LocalStorageCacheStore', function() {
         expect(data).to.not.be.null;
         data = JSON.parse(data);
 
-        expect(data).to.have.property('ttl', Date.now() + ttl);
+        var ttlInMilliseconds = Date.now() + (ttl * 1000);
+        expect(data).to.have.property('ttl', ttlInMilliseconds);
         expect(data).to.have.property('value', entryValue);
       });
     });

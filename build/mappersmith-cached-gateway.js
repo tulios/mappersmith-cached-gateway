@@ -57,7 +57,7 @@ CacheStore.prototype = {
 
   resolveTTL: function(opts) {
     var options = Utils.extend({ttl: this.ttl}, opts);
-    var ttl = parseInt(options.ttl, 10);
+    var ttl = parseFloat(options.ttl, 10);
     if (isNaN(ttl)) ttl = this.ttl;
     return ttl;
   },
@@ -102,7 +102,7 @@ CacheStore.prototype = {
         opts.request();
 
       } else {
-        gateway.successCallback(data);
+        gateway.successCallback(data, {cacheHit: true});
       }
     }.bind(this));
   },
@@ -305,12 +305,13 @@ var LocalStorageCacheStore = CreateCacheStore({
 
   _syncWrite: function(name, data, opts) {
     var cacheKey = this.cacheKey(name);
-    var ttl = this.resolveTTL(opts);
+    var ttlInSeconds = this.resolveTTL(opts);
+    var ttl = this._convertToDate(ttlInSeconds);
 
     this.storage.setItem(
       cacheKey,
       JSON.stringify({
-        ttl: Date.now() + ttl,
+        ttl: ttl,
         value: data
       })
     );
@@ -320,6 +321,10 @@ var LocalStorageCacheStore = CreateCacheStore({
     Object.keys(this.storage).
     filter(function(key) { return this.isCacheKey(key) }.bind(this)).
     forEach(eachCallback.bind(this));
+  },
+
+  _convertToDate: function(ttlInSeconds) {
+    return Date.now() + (ttlInSeconds * 1000);
   },
 
   _async: function(callback) {

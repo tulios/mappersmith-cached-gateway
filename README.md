@@ -27,6 +27,7 @@ Build
 
 ```sh
 npm run build
+npm run release # for minified version
 ```
 
 ## Requiring in Node.js
@@ -85,7 +86,7 @@ var Client = Mappersmith.forge(manifest, MyCachedGateway)
 
 ### Options for CacheStore
 
-There are two options which can be configured for a cache store: **namespace** and **ttl** (Some cache stores may have specific options, check the list of [available cache stores](#bundled-implementations) for a comprehensive list of options). The time to live (ttl) value can be defined globally and for each request using gateway options. It is possible to change the default ttl (the global value) through `createCachedGateway`, just pass an object with the key **ttl** and the value in seconds.
+There are two options which can be configured for a cache store: **namespace** and **ttl** (Some cache stores may have specific options, check the list of [available cache stores](#bundled-implementations) for a comprehensive list of options). The _time to live_ (ttl) value can be defined globally and for each request using gateway options. It is possible to change the default ttl (the global value) through `createCachedGateway`, just pass an object with the key **ttl** and the **value in seconds**.
 
 ```javascript
 var CGateway = MappersmithCachedGateway;
@@ -136,6 +137,19 @@ var manifest = {
     }
   }
 }
+```
+
+#### Stats object
+
+In the success callback [Mappersmith](https://github.com/tulios/mappersmith) will give to you a stats object as your second argument. With a cached gateway you will have the key `cacheHit` with the value __true__ if it was read from a cache store. Example:
+
+```javascript
+...
+Client.Book.byId({id: 3}, function(data, stats) {
+  // success callback
+  console.log('cache ' + (stats.cacheHit ? 'HIT' : 'MISS'))
+})
+...
 ```
 
 ## CacheStore

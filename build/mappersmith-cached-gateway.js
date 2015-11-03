@@ -24,7 +24,7 @@ module.exports = {
 
 },{"./src/cache-store":2,"./src/create-cache-store":3,"./src/create-cached-gateway":4,"./src/local-storage-cache-store":5,"./src/session-storage-cache-store":6}],2:[function(require,module,exports){
 (function (global){
-var Utils = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null).Utils;
+var Utils = (typeof window !== "undefined" ? window['Mappersmith'] : typeof global !== "undefined" ? global['Mappersmith'] : null).Utils;
 
 /*
  * An abstract cache store class. There are multiple cache store
@@ -170,7 +170,7 @@ module.exports = CacheStore;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],3:[function(require,module,exports){
 (function (global){
-var Mappersmith = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null);
+var Mappersmith = (typeof window !== "undefined" ? window['Mappersmith'] : typeof global !== "undefined" ? global['Mappersmith'] : null);
 var Utils = Mappersmith.Utils;
 var CacheStore = require('./cache-store');
 
@@ -187,7 +187,7 @@ module.exports = function(methods) {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./cache-store":2}],4:[function(require,module,exports){
 (function (global){
-var Mappersmith = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null);
+var Mappersmith = (typeof window !== "undefined" ? window['Mappersmith'] : typeof global !== "undefined" ? global['Mappersmith'] : null);
 var Utils = Mappersmith.Utils;
 var LocalStorageCacheStore = require('./local-storage-cache-store');
 
@@ -229,7 +229,7 @@ module.exports = function(TransportGateway, CacheStore, cacheStoreOpts) {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./local-storage-cache-store":5}],5:[function(require,module,exports){
 (function (global){
-var Utils = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null).Utils;
+var Utils = (typeof window !== "undefined" ? window['Mappersmith'] : typeof global !== "undefined" ? global['Mappersmith'] : null).Utils;
 var CreateCacheStore = require('./create-cache-store');
 
 var LocalStorageCacheStore = CreateCacheStore({
@@ -337,7 +337,7 @@ module.exports = LocalStorageCacheStore;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./create-cache-store":3}],6:[function(require,module,exports){
 (function (global){
-var Utils = (typeof window !== "undefined" ? window.Mappersmith : typeof global !== "undefined" ? global.Mappersmith : null).Utils;
+var Utils = (typeof window !== "undefined" ? window['Mappersmith'] : typeof global !== "undefined" ? global['Mappersmith'] : null).Utils;
 var LocalStorageCacheStore = require('./local-storage-cache-store');
 var CreateCacheStore = require('./create-cache-store');
 

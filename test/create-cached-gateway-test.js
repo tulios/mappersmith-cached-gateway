@@ -1,6 +1,7 @@
-var expect = chai.expect;
-var Utils = Mappersmith.Utils;
+var Mappersmith = require('mappersmith');
+var MappersmithCachedGateway = require('../index');
 
+var Utils = Mappersmith.Utils;
 var createCachedGateway = MappersmithCachedGateway.createCachedGateway;
 
 describe('#createCachedGateway', function() {

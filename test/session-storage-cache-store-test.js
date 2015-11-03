@@ -1,4 +1,6 @@
-var expect = chai.expect;
+var Mappersmith = require('mappersmith');
+var MappersmithCachedGateway = require('../index');
+
 var LocalStorageCacheStore = MappersmithCachedGateway.LocalStorageCacheStore;
 var SessionStorageCacheStore = MappersmithCachedGateway.SessionStorageCacheStore;
 

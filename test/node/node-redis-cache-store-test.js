@@ -1,35 +1,34 @@
 require('./test-helper');
-var MappersmithCachedGateway = require('../../node');
+var rewire = require("rewire");
+var NodeRedisCacheStore = rewire('../../src/node-redis-cache-store');
 
 describe('NodeRedisCacheStore', function() {
-  var NodeRedisCacheStore,
-      cache,
+  var cache,
       entryName,
       entryValue,
-      client;
+      client,
+      restore;
 
   var fakeredis = require('fakeredis');
   var redis = require('redis');
 
-  before(function() {
-    sinon.stub(redis, 'createClient', fakeredis.createClient);
-  });
-
-  after(function() {
-    redis.createClient.restore();
-  });
-
   beforeEach(function(done) {
-    NodeRedisCacheStore = MappersmithCachedGateway.node.NodeRedisCacheStore;
+    client = fakeredis.createClient();
+    client.flushdb(function(err) { done() });
+
+    sinon.stub(redis, 'createClient', function() { return client });
+    restore = NodeRedisCacheStore.__set__('redis', redis);
+
     entryName = 'test-redis';
     entryValue = 'test-redis';
 
-    client = redis.createClient();
-    client.flushdb(function(err) { done() });
-
     cache = new NodeRedisCacheStore();
-    cache.storage = client;
     cache.logger = false;
+  });
+
+  afterEach(function() {
+    redis.createClient.restore();
+    restore();
   });
 
   describe('constructor', function() {
@@ -46,7 +45,7 @@ describe('NodeRedisCacheStore', function() {
     });
 
     it('holds a reference of redis client at "storage"', function() {
-      expect(cache.storage).to.be.instanceof(redis.RedisClient);
+      expect(cache.storage).to.eql(client)
     });
 
     it('accepts a custom logger at "redis.logger" attribute', function() {
@@ -55,10 +54,10 @@ describe('NodeRedisCacheStore', function() {
 
     it('calls method "auth" if attribute "redis.password" is defined', function() {
       var password = '123';
-      sinon.spy(redis.RedisClient.prototype, 'auth');
+      sinon.spy(client, 'auth');
       cache = new NodeRedisCacheStore({redis: {password: password}});
-      expect(redis.RedisClient.prototype.auth).to.have.been.calledWith(password);
-      redis.RedisClient.prototype.auth.restore();
+      expect(client.auth).to.have.been.calledWith(password);
+      client.auth.restore();
     });
   });
 

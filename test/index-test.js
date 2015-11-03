@@ -1,4 +1,4 @@
-var expect = chai.expect;
+var MappersmithCachedGateway = require('../index');
 
 describe('MappersmithCachedGateway', function() {
 

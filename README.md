@@ -244,6 +244,6 @@ Server
 * Compile: `npm run build`
 * Release (minified version): `npm run release`
 
-## Licence
+## License
 
-See [LICENCE](https://github.com/tulios/mappersmith-cached-gateway/blob/master/LICENSE) for more details.
+See [LICENSE](https://github.com/tulios/mappersmith-cached-gateway/blob/master/LICENSE) for more details.

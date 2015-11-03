@@ -1,4 +1,5 @@
 [![npm version](https://badge.fury.io/js/mappersmith-cached-gateway.svg)](http://badge.fury.io/js/mappersmith-cached-gateway)
+[![Build Status](https://travis-ci.org/tulios/mappersmith-cached-gateway.svg?branch=master)](https://travis-ci.org/tulios/mappersmith-cached-gateway)
 # Mappersmith CachedGateway
 
 **CachedGateway** is a gateway for [Mappersmith](https://github.com/tulios/mappersmith) that wraps a transport gateway with a cache store to achieve transparent cache functionalities. It provides cache stores for browser and server.

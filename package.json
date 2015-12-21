@@ -27,7 +27,7 @@
   "devDependencies": {
     "browserify": "^8.0.3",
     "chai": "^1.10.0",
-    "fakeredis": "^0.3.0",
+    "fakeredis": "^1.0.2",
     "karma": "^0.13.2",
     "karma-browserify": "^4.2.1",
     "karma-chai": "^0.1.0",

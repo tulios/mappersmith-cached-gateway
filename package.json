@@ -26,8 +26,9 @@
   "license": "MIT",
   "devDependencies": {
     "browserify": "^8.0.3",
+    "browserify-shim": "^3.8.2",
     "chai": "^1.10.0",
-    "fakeredis": "^0.3.0",
+    "fakeredis": "^1.0.2",
     "karma": "^0.13.2",
     "karma-browserify": "^4.2.1",
     "karma-chai": "^0.1.0",
@@ -48,8 +49,7 @@
   },
   "dependencies": {
     "mappersmith": ">=0.11.0 <=1.0.0",
-    "redis": "^0.12.1",
-    "browserify-shim": "^3.8.2"
+    "redis": "^0.12.1"
   },
   "browserify": {
     "transform": ["browserify-shim"]

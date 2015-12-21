@@ -95,10 +95,10 @@ describe('NodeRedisCacheStore', function() {
     describe('with expired entry', function() {
       beforeEach(function(done) {
         cache.write(entryName, entryValue);
-        client.expire(cache.cacheKey(entryName), 0);
+        client.del(cache.cacheKey(entryName));
 
         client.get(cache.cacheKey(entryName), function(err, value) {
-          expect(value).to.not.be.null;
+          expect(value).to.be.null;
           done();
         });
       });

@@ -111,7 +111,7 @@ var CGateway = MappersmithCachedGateway;
 CGateway.createCachedGateway({ttl: 10 * 60, namespace: 'cache'})
 ```
 
-#### How to setup a different TTL for each service
+#### How to setup a different TTL for each service?
 
 Just use Mappersmith URL matching and include the option **cache** into the gateway option, example:
 
@@ -138,6 +138,48 @@ var manifest = {
     }
   }
 }
+```
+
+#### How to disable cache for some calls?
+
+There are two ways to do it:
+
+1) URL matching
+
+```javascript
+var manifest = {
+  host: 'http://my.api.com',
+  rules: [
+    { // This will only be applied when the URL matches the regexp
+      match: /\/v1\/books/,
+      values: {gateway: {cache: {disableCache: true}}}
+    }
+  ],
+  resources: {
+    Book: {
+      all:  {path: '/v1/books.json'},
+      byId: {path: '/v1/books/{id}.json'}
+    },
+    Photo: {
+      byCategory: {path: '/v1/photos/{category}/all.json'}
+    }
+  }
+}
+```
+
+2) Method call
+
+```javascript
+Client.Book.byId({id: 3}, {cache: {disableCache: true}})
+Client.Book.all({}, {cache: {disableCache: true}})
+
+// or
+
+Client.Book.byId(
+  {id: 3},
+  function(data, stats) {/* success callback */},
+  {cache: {disableCache: true}}
+)
 ```
 
 #### Stats object
@@ -203,6 +245,7 @@ MappersmithCachedGateway.createCacheStore({
     //  - this.options
     //  - this.namespace
     //  - this.ttl
+    //  - this.disableCache
   },
 
   read: function(name, callback) {

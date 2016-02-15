@@ -59,7 +59,7 @@ CacheStore.prototype = {
     var gateway = opts.gatewayInstance;
     var cacheOpts = Utils.extend({}, opts.cacheOpts);
 
-    if (this.disableCache) {
+    if (this.disableCache || cacheOpts.disableCache) {
       opts.request();
       return;
     }

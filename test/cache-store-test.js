@@ -213,13 +213,26 @@ describe('CacheStore', function() {
       });
     });
 
-    describe('with disableCache "true"', function() {
+    describe('with disableCache "true" from cacheStore', function() {
       beforeEach(function() {
         cache = new CacheStore({disableCache: true});
         sinon.stub(cache, 'write')
         sinon.stub(cache, 'read', function(name, callback) { callback('cachedData') });
 
         cacheFetch(newGateway());
+      });
+
+      it('calls the request callback and skips writes and reads', function() {
+        expect(request).to.have.been.called;
+        expect(success).to.have.been.calledWith(data);
+        expect(cache.write).to.not.been.called;
+        expect(cache.read).to.not.been.called;
+      });
+    });
+
+    describe('with disableCache "true" from method opts', function() {
+      beforeEach(function() {
+        cacheFetch(newGateway(), {cacheOpts: {disableCache: true}});
       });
 
       it('calls the request callback and skips writes and reads', function() {

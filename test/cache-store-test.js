@@ -50,6 +50,10 @@ describe('CacheStore', function() {
       expect(cache.ttl).to.be.equal(300);
     });
 
+    it('has default disableCache', function() {
+      expect(cache.disableCache).to.be.false;
+    });
+
     it('allows to change the default namespace', function() {
       expect(new CacheStore({namespace: 'A'}).namespace).to.be.equal('A');
     });
@@ -206,6 +210,23 @@ describe('CacheStore', function() {
 
       it('calls the successCallback with data and {cacheHit: true} extraStats', function() {
         expect(success).to.have.been.calledWith(data, sinon.match.has('cacheHit', true));
+      });
+    });
+
+    describe('with disableCache "true"', function() {
+      beforeEach(function() {
+        cache = new CacheStore({disableCache: true});
+        sinon.stub(cache, 'write')
+        sinon.stub(cache, 'read', function(name, callback) { callback('cachedData') });
+
+        cacheFetch(newGateway());
+      });
+
+      it('calls the request callback and skips writes and reads', function() {
+        expect(request).to.have.been.called;
+        expect(success).to.have.been.calledWith(data);
+        expect(cache.write).to.not.been.called;
+        expect(cache.read).to.not.been.called;
       });
     });
   });

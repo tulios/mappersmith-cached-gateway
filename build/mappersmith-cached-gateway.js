@@ -33,12 +33,14 @@ var Utils = (typeof window !== "undefined" ? window['Mappersmith'] : typeof glob
  * @param opts {Object} - accepted keys:
  *  - namespace {String}, default: 'mappersmith_cache'
  *  - ttl {int}, default: 300 (5 minutes)
+ *  - disableCache {Boolean}, default: false
  */
 var CacheStore = function(opts) {
   this.options = Utils.extend({}, opts);
   this.namespace = this.options.namespace || 'mappersmith_cache';
   this.namespaceRegex = new RegExp('^' + this.namespace + ':');
   this.ttl = this.options.ttl || 5 * 60;
+  this.disableCache = this.options.disableCache || false;
 }
 
 CacheStore.prototype = {
@@ -82,6 +84,11 @@ CacheStore.prototype = {
   fetch: function(name, opts) {
     var gateway = opts.gatewayInstance;
     var cacheOpts = Utils.extend({}, opts.cacheOpts);
+
+    if (this.disableCache || cacheOpts.disableCache) {
+      opts.request();
+      return;
+    }
 
     this.read(name, function(data) {
       if (data === null) {
